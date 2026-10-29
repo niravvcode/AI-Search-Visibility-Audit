@@ -29,11 +29,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS
+# CORS - Permissive regex to allow all Vercel domains, localhost, and custom origins
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if origins else ["*"],
+    allow_origins=origins if origins and "*" not in origins else [],
+    allow_origin_regex=r".*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
