@@ -33,12 +33,32 @@ app = FastAPI(
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if origins and "*" not in origins else [],
+    allow_origins=origins if origins and "*" not in origins else ["*"],
     allow_origin_regex=r".*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+@app.head("/")
+def root():
+    return {
+        "status": "ok",
+        "service": settings.app_name,
+        "version": settings.app_version,
+        "message": "AI Search Visibility API is active.",
+    }
+
+
+@app.get("/healthz")
+@app.head("/healthz")
+@app.get("/health")
+@app.head("/health")
+def healthz():
+    return {"status": "ok"}
+
 
 # Register routers under /api
 app.include_router(health.router, prefix="/api")
