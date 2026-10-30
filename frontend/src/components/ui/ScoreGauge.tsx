@@ -3,6 +3,7 @@ interface ScoreGaugeProps {
   size?: "sm" | "md" | "lg";
   label?: string;
   showLevel?: boolean;
+  showGrade?: boolean;
 }
 
 export function ScoreGauge({
@@ -10,6 +11,7 @@ export function ScoreGauge({
   size = "md",
   label = "Readiness Score",
   showLevel = true,
+  showGrade = true,
 }: ScoreGaugeProps) {
   const clampedScore = Math.max(0, Math.min(100, Math.round(score)));
 
@@ -20,8 +22,8 @@ export function ScoreGauge({
   };
   const strokeMap = {
     sm: 5,
-    md: 8,
-    lg: 10,
+    md: 7,
+    lg: 9,
   };
   const sizePx = {
     sm: 70,
@@ -37,19 +39,28 @@ export function ScoreGauge({
   let colorClass = "text-danger";
   let badgeText = "Critical Gaps";
   let badgeColor = "bg-danger/10 text-danger border-danger/20";
+  let grade = "F";
 
-  if (clampedScore >= 80) {
+  if (clampedScore >= 90) {
     colorClass = "text-success";
     badgeText = "Answer Ready";
     badgeColor = "bg-success/10 text-success border-success/20";
+    grade = "A+";
+  } else if (clampedScore >= 75) {
+    colorClass = "text-success";
+    badgeText = "Optimized";
+    badgeColor = "bg-success/10 text-success border-success/20";
+    grade = "A";
   } else if (clampedScore >= 60) {
     colorClass = "text-info";
     badgeText = "Competitive";
     badgeColor = "bg-info/10 text-info border-info/20";
-  } else if (clampedScore >= 40) {
+    grade = "B";
+  } else if (clampedScore >= 45) {
     colorClass = "text-warning";
-    badgeText = "Needs Optimization";
+    badgeText = "Needs Work";
     badgeColor = "bg-warning/10 text-warning border-warning/20";
+    grade = "C";
   }
 
   return (
@@ -59,7 +70,7 @@ export function ScoreGauge({
           width={sizePx[size]}
           height={sizePx[size]}
           viewBox={`0 0 ${sizePx[size]} ${sizePx[size]}`}
-          className="transform -rotate-90"
+          className="transform -rotate-90 drop-shadow-sm"
         >
           {/* Background circle track */}
           <circle
@@ -69,7 +80,7 @@ export function ScoreGauge({
             stroke="currentColor"
             strokeWidth={stroke}
             fill="transparent"
-            className="text-border opacity-60"
+            className="text-border opacity-50"
           />
           {/* Progress circle */}
           <circle
@@ -82,19 +93,26 @@ export function ScoreGauge({
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             fill="transparent"
-            className={`${colorClass} transition-all duration-700 ease-out`}
+            className={`${colorClass} transition-all duration-1000 ease-out`}
           />
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span
-            className={`font-bold tracking-tight text-text ${
-              size === "lg" ? "text-3xl" : size === "md" ? "text-2xl" : "text-base"
-            }`}
-          >
-            {clampedScore}
-          </span>
-          <span className="text-[10px] uppercase font-semibold text-muted">/100</span>
+          <div className="flex items-baseline justify-center">
+            <span
+              className={`font-extrabold tracking-tight text-text ${
+                size === "lg" ? "text-3xl" : size === "md" ? "text-2xl" : "text-base"
+              }`}
+            >
+              {clampedScore}
+            </span>
+            <span className="text-[10px] uppercase font-bold text-muted ml-0.5">/100</span>
+          </div>
+          {showGrade && (
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted">
+              Grade {grade}
+            </span>
+          )}
         </div>
       </div>
 
@@ -102,7 +120,7 @@ export function ScoreGauge({
 
       {showLevel && (
         <span
-          className={`mt-1.5 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${badgeColor}`}
+          className={`mt-1.5 inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${badgeColor}`}
         >
           {badgeText}
         </span>

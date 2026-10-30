@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { HelpCircle, Plus, Trash2, Search, Filter, Sparkles, Layers } from "lucide-react";
+import {
+  HelpCircle,
+  Plus,
+  Trash2,
+  Search,
+  Filter,
+  Sparkles,
+  Layers,
+  ArrowRight,
+  Tag,
+  CheckCircle2,
+  AlertTriangle,
+} from "lucide-react";
 
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
@@ -105,7 +117,7 @@ export function Questions() {
     try {
       await deleteQuestion(id);
       setQuestions((prev) => prev.filter((q) => q.id !== id));
-    } catch (err: any) {
+    } catch {
       alert("Failed to delete question");
     }
   }
@@ -133,27 +145,75 @@ export function Questions() {
     }
   };
 
+  const criticalCount = questions.filter((q) => q.priority === "critical").length;
+  const informationalCount = questions.filter((q) => q.intent === "informational").length;
+  const commercialCount = questions.filter((q) => q.intent === "commercial_investigation").length;
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-4">
+    <div className="space-y-8 animate-in fade-in duration-300">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-text">Target Questions</h1>
-          <p className="text-sm text-muted mt-1">
-            Questions potential customers ask search and answer engines that your content should answer.
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+              Query Intelligence
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">Target Questions</h1>
+          <p className="text-xs sm:text-sm text-muted mt-1">
+            Questions potential customers ask search and answer engines that your content should answer directly.
           </p>
         </div>
+
         <Button
           variant="primary"
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-1.5"
+          className="flex items-center gap-2 text-xs shadow-sm"
         >
           <Plus className="w-4 h-4" /> Add Questions
         </Button>
       </div>
 
-      {/* Filter Bar */}
-      <Card className="p-4 bg-surface border-border">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+      {/* Quick Intent Stat Strip */}
+      {questions.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-3.5 rounded-xl border border-border bg-surface flex items-center justify-between">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Total Questions</span>
+              <div className="text-xl font-extrabold text-text mt-0.5">{questions.length}</div>
+            </div>
+            <HelpCircle className="w-5 h-5 text-primary opacity-60" />
+          </div>
+
+          <div className="p-3.5 rounded-xl border border-border bg-surface flex items-center justify-between">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Critical Priority</span>
+              <div className="text-xl font-extrabold text-danger mt-0.5">{criticalCount}</div>
+            </div>
+            <AlertTriangle className="w-5 h-5 text-danger opacity-60" />
+          </div>
+
+          <div className="p-3.5 rounded-xl border border-border bg-surface flex items-center justify-between">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Informational</span>
+              <div className="text-xl font-extrabold text-info mt-0.5">{informationalCount}</div>
+            </div>
+            <Tag className="w-5 h-5 text-info opacity-60" />
+          </div>
+
+          <div className="p-3.5 rounded-xl border border-border bg-surface flex items-center justify-between">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Commercial</span>
+              <div className="text-xl font-extrabold text-primary mt-0.5">{commercialCount}</div>
+            </div>
+            <Sparkles className="w-5 h-5 text-primary opacity-60" />
+          </div>
+        </div>
+      )}
+
+      {/* Filter Toolbar Card */}
+      <Card className="p-4 bg-surface border-border shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           <div>
             <Label>Associated Website</Label>
             <Select
@@ -196,11 +256,11 @@ export function Questions() {
           </div>
 
           <div>
-            <Label>Search Text</Label>
+            <Label>Search Query</Label>
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted" />
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-muted pointer-events-none" />
               <Input
-                className="pl-9"
+                className="pl-9 text-xs"
                 placeholder="Filter questions..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -210,25 +270,30 @@ export function Questions() {
         </div>
       </Card>
 
-      {/* Add Modal */}
+      {/* Add Questions Modal */}
       {showAddModal && (
-        <Card className="p-6 bg-surface border-border">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-base font-semibold text-text">
-              {batchMode ? "Batch Add Target Questions" : "Add Single Target Question"}
-            </h2>
+        <Card className="p-6 md:p-8 bg-surface border-border shadow-elevated">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-4 mb-5">
+            <div>
+              <h2 className="text-base font-bold text-text">
+                {batchMode ? "Batch Import Target Questions" : "Add Target User Query"}
+              </h2>
+              <p className="text-xs text-muted mt-0.5">
+                Questions are evaluated against crawled website content for direct answers and schema.
+              </p>
+            </div>
             <button
               onClick={() => setBatchMode(!batchMode)}
-              className="text-xs text-primary hover:underline flex items-center gap-1"
+              className="text-xs text-primary font-semibold hover:underline flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
             >
-              <Layers className="w-3.5 h-3.5" />
+              <Layers className="w-4 h-4" />
               <span>{batchMode ? "Switch to Single Entry" : "Switch to Batch Import"}</span>
             </button>
           </div>
 
           <form onSubmit={handleAddQuestion} className="space-y-4">
             <div>
-              <Label>Website</Label>
+              <Label>Target Website</Label>
               <Select
                 required
                 value={selectedWebsiteId}
@@ -247,15 +312,17 @@ export function Questions() {
 
             {batchMode ? (
               <div>
-                <Label>Question List (one question per line)</Label>
+                <Label>Question List (one query per line)</Label>
                 <Textarea
                   required
-                  rows={5}
+                  rows={6}
                   placeholder={`What is the pricing model for your product?\nHow does the API integration work?\nWhat are the top alternatives?`}
                   value={batchTexts}
                   onChange={(e) => setBatchTexts(e.target.value)}
                 />
-                <p className="text-xs text-muted mt-1">Search intent will be automatically categorized.</p>
+                <p className="text-[11px] text-muted mt-1.5">
+                  Search intent will be automatically categorized by our classification engine.
+                </p>
               </div>
             ) : (
               <>
@@ -263,7 +330,7 @@ export function Questions() {
                   <Label>Question Text</Label>
                   <Input
                     required
-                    placeholder="e.g. How does Answer Engine Optimization improve visibility?"
+                    placeholder="e.g. How does Answer Engine Optimization improve brand visibility?"
                     value={questionText}
                     onChange={(e) => setQuestionText(e.target.value)}
                   />
@@ -300,13 +367,13 @@ export function Questions() {
             <div>
               <Label>Topic or Category (Optional)</Label>
               <Input
-                placeholder="e.g. Pricing, Security, Features"
+                placeholder="e.g. Pricing, Security, Integration"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2.5 pt-3 border-t border-border">
               <Button type="button" variant="secondary" onClick={() => setShowAddModal(false)}>
                 Cancel
               </Button>
@@ -318,17 +385,18 @@ export function Questions() {
         </Card>
       )}
 
-      {/* Questions Table */}
+      {/* Questions Data Table */}
       {loading ? (
-        <div className="flex justify-center p-12">
-          <LoadingSpinner className="w-8 h-8" />
+        <div className="flex flex-col justify-center items-center p-16 gap-3">
+          <LoadingSpinner className="w-8 h-8 text-primary" />
+          <span className="text-xs text-muted uppercase font-semibold">Loading Target Questions...</span>
         </div>
       ) : filteredQuestions.length === 0 ? (
-        <Card className="p-8">
+        <Card className="p-10 text-center bg-surface border-border">
           <EmptyState
             title="No Questions Match Current Filters"
             description="Add questions your target audience might ask, or adjust your active filters above."
-            icon={<HelpCircle className="w-8 h-8 text-primary" />}
+            icon={<HelpCircle className="w-10 h-10 text-primary" />}
             action={
               <Button variant="primary" onClick={() => setShowAddModal(true)}>
                 Add Question
@@ -337,29 +405,33 @@ export function Questions() {
           />
         </Card>
       ) : (
-        <Card className="overflow-hidden bg-surface border-border">
+        <Card className="overflow-hidden bg-surface border-border shadow-card">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
-                <tr className="border-b border-border bg-background/50 text-xs font-semibold uppercase text-muted">
-                  <th className="py-3 px-4">Question</th>
+                <tr className="border-b border-border bg-surface-hover/70 text-[11px] font-bold uppercase tracking-wider text-muted">
+                  <th className="py-3 px-5">Target Query</th>
                   <th className="py-3 px-4">Search Intent</th>
-                  <th className="py-3 px-4">Topic</th>
+                  <th className="py-3 px-4">Category</th>
                   <th className="py-3 px-4">Priority</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredQuestions.map((q) => (
-                  <tr key={q.id} className="hover:bg-background/40 transition">
-                    <td className="py-3 px-4 font-medium text-text max-w-md">{q.text}</td>
-                    <td className="py-3 px-4">
+                  <tr key={q.id} className="hover:bg-surface-hover/50 transition-colors">
+                    <td className="py-3.5 px-5 font-semibold text-text max-w-md">
+                      {q.text}
+                    </td>
+                    <td className="py-3.5 px-4">
                       <Badge variant={intentBadgeVariant(q.intent)}>
-                        {q.intent.replace("_", " ")}
+                        {q.intent.replace(/_/g, " ")}
                       </Badge>
                     </td>
-                    <td className="py-3 px-4 text-xs text-muted">{q.topic || "General"}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3.5 px-4 text-xs text-muted font-medium">
+                      {q.topic || "General"}
+                    </td>
+                    <td className="py-3.5 px-4">
                       <Badge
                         variant={
                           q.priority === "critical"
@@ -372,10 +444,10 @@ export function Questions() {
                         {q.priority}
                       </Badge>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3.5 px-5 text-right">
                       <button
                         onClick={() => handleDelete(q.id)}
-                        className="text-muted hover:text-danger p-1 rounded transition"
+                        className="text-muted hover:text-danger p-1.5 rounded-lg hover:bg-surface-hover transition cursor-pointer"
                         title="Delete question"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -386,8 +458,9 @@ export function Questions() {
               </tbody>
             </table>
           </div>
-          <div className="p-3 border-t border-border bg-surface text-xs text-muted flex justify-between">
+          <div className="p-3.5 border-t border-border bg-surface text-xs text-muted font-medium flex justify-between items-center">
             <span>Showing {filteredQuestions.length} of {questions.length} questions</span>
+            <span className="text-[11px] text-muted">Ready for Answer-Readiness Audit</span>
           </div>
         </Card>
       )}

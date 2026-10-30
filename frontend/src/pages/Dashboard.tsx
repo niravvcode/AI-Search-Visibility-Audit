@@ -14,6 +14,9 @@ import {
   Sparkles,
   Search,
   CheckCircle2,
+  Layers,
+  Activity,
+  Zap,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -79,9 +82,11 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center h-72 gap-3">
+      <div className="flex flex-col justify-center items-center h-80 gap-3">
         <LoadingSpinner className="w-8 h-8 text-primary" />
-        <span className="text-xs font-medium text-muted">Loading intelligence workspace...</span>
+        <span className="text-xs font-semibold text-muted tracking-wide uppercase">
+          Initializing Intelligence Workspace...
+        </span>
       </div>
     );
   }
@@ -116,61 +121,74 @@ export function Dashboard() {
   });
 
   return (
-    <div className="space-y-8">
-      {/* Top Banner & Quick Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles className="w-3 h-3" /> AI Search Visibility 2.0
-            </span>
+    <div className="space-y-8 animate-in fade-in duration-300">
+      {/* Executive Hero Banner & Quick Actions */}
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-6 md:p-8 shadow-card">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 relative z-10">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/25">
+                <Sparkles className="w-3.5 h-3.5" /> Intelligence Suite
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-success/10 text-success border border-success/25">
+                <Activity className="w-3.5 h-3.5" /> Dual Protocol Verified
+              </span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-text">
+              Platform Overview
+            </h1>
+            <p className="text-xs sm:text-sm text-muted leading-relaxed">
+              Separated auditing for Website Answer-Readiness and AI Search Visibility across LLM answer engines and search engines.
+            </p>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-text">Platform Overview</h1>
-          <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
-            Separated auditing for Website Answer-Readiness and AI Search Visibility.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => setIsQuickScanOpen(true)}
-            className="flex items-center gap-1.5 text-xs"
-          >
-            <Search className="w-3.5 h-3.5 text-primary" /> Quick Scan URL
-          </Button>
-          <Link to="/websites">
-            <Button variant="secondary" className="flex items-center gap-1.5 text-xs">
-              <Globe className="w-3.5 h-3.5" /> Manage Sites
+
+          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+            <Button
+              variant="secondary"
+              onClick={() => setIsQuickScanOpen(true)}
+              className="text-xs flex items-center gap-2 py-2 px-3.5"
+            >
+              <Search className="w-3.5 h-3.5 text-primary" />
+              <span>Quick Scan URL</span>
             </Button>
-          </Link>
-          <Link to="/audits">
-            <Button variant="primary" className="flex items-center gap-1.5 text-xs shadow-sm">
-              <PlusCircle className="w-3.5 h-3.5" /> Start Audit
-            </Button>
-          </Link>
+            <Link to="/websites">
+              <Button variant="secondary" className="text-xs flex items-center gap-2 py-2 px-3.5">
+                <Globe className="w-3.5 h-3.5 text-secondary" />
+                <span>Manage Sites</span>
+              </Button>
+            </Link>
+            <Link to="/audits">
+              <Button variant="primary" className="text-xs flex items-center gap-2 py-2 px-4 shadow-sm">
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>Start New Audit</span>
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Backend Status Notice */}
+      {/* Backend Status Bar */}
       {health && (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3.5 rounded-xl border border-border bg-surface text-xs shadow-sm">
-          <div className="flex items-center gap-2 text-muted">
-            <ShieldCheck className="w-4 h-4 text-success" />
-            <span>
-              Backend API: <b className="text-text">{health.version}</b>
-            </span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-xl border border-border bg-surface text-xs shadow-sm">
+          <div className="flex flex-wrap items-center gap-3 text-muted">
+            <div className="flex items-center gap-1.5 font-bold text-text">
+              <ShieldCheck className="w-4 h-4 text-success" />
+              <span>Backend API {health.version}</span>
+            </div>
             <span className="text-border">•</span>
-            <span>
-              Database: <b className="text-success">{health.database.toUpperCase()}</b>
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span>Database:</span>
+              <span className="font-bold text-success capitalize">{health.database}</span>
+            </div>
             <span className="text-border">•</span>
-            <span className="text-success flex items-center gap-1 font-medium">
-              <CheckCircle2 className="w-3 h-3" /> CORS Active
-            </span>
+            <div className="flex items-center gap-1 text-success font-semibold">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>CORS Policy Connected</span>
+            </div>
           </div>
-          <span className="text-muted text-[11px] font-medium">
+          <div className="text-[11px] font-medium text-muted">
             Strict Separation: Content Readiness vs Search Observations
-          </span>
+          </div>
         </div>
       )}
 
@@ -180,7 +198,7 @@ export function Dashboard() {
           <EmptyState
             title="No Websites Configured Yet"
             description="Register your canonical domain and add target user questions to begin auditing answer readiness."
-            icon={<Globe className="w-12 h-12 text-primary" />}
+            icon={<Globe className="w-10 h-10 text-primary" />}
             action={
               <Link to="/websites">
                 <Button variant="primary" className="mt-2">
@@ -194,75 +212,87 @@ export function Dashboard() {
         <>
           {/* Capability A: Answer-Readiness Metrics */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Badge variant="primary">Capability A</Badge>
-                <h2 className="text-lg font-bold text-text">Website Content Answer-Readiness</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-border-subtle pb-2">
+              <div className="flex items-center gap-2.5">
+                <Badge variant="primary" dot>Capability A</Badge>
+                <h2 className="text-base sm:text-lg font-bold tracking-tight text-text">
+                  Website Content Answer-Readiness
+                </h2>
               </div>
               <span className="text-xs text-muted font-medium">Deterministic Rule Rubric (0-100)</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="p-4 bg-surface border-border hover:border-primary/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Registered Sites
                   </span>
-                  <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                    <Globe className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                    <Globe className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">{websites.length}</div>
-                <p className="text-xs text-muted mt-1">Verified canonical domains</p>
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
+                  {websites.length}
+                </div>
+                <p className="text-xs text-muted mt-1 font-medium">Verified canonical domains</p>
               </Card>
 
-              <Card className="p-4 bg-surface border-border hover:border-success/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Avg Readiness Score
                   </span>
-                  <span className="p-1.5 rounded-lg bg-success/10 text-success">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-success/10 text-success">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">{avgReadiness} / 100</div>
-                <p className="text-xs text-muted mt-1">Content completeness across audits</p>
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
+                  {avgReadiness} <span className="text-sm font-normal text-muted">/ 100</span>
+                </div>
+                <p className="text-xs text-muted mt-1 font-medium">Content completeness across audits</p>
               </Card>
 
-              <Card className="p-4 bg-surface border-border hover:border-info/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Questions Tracked
                   </span>
-                  <span className="p-1.5 rounded-lg bg-info/10 text-info">
-                    <HelpCircle className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-info/10 text-info">
+                    <HelpCircle className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">{totalQuestions}</div>
-                <p className="text-xs text-muted mt-1">Target queries categorized</p>
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
+                  {totalQuestions}
+                </div>
+                <p className="text-xs text-muted mt-1 font-medium">Target user queries categorized</p>
               </Card>
 
-              <Card className="p-4 bg-surface border-border hover:border-primary/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Total Audits Run
                   </span>
-                  <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                    <FileCheck2 className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                    <FileCheck2 className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">{totalAudits}</div>
-                <p className="text-xs text-muted mt-1">{answeredQuestions} directly answered</p>
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
+                  {totalAudits}
+                </div>
+                <p className="text-xs text-muted mt-1 font-medium">
+                  {answeredQuestions} questions directly answered
+                </p>
               </Card>
             </div>
           </div>
 
           {/* Capability B: AI Search Visibility Metrics */}
-          <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Badge variant="info">Capability B</Badge>
-                <h2 className="text-lg font-bold text-text">
+          <div className="space-y-4 pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-border-subtle pb-2">
+              <div className="flex items-center gap-2.5">
+                <Badge variant="info" dot>Capability B</Badge>
+                <h2 className="text-base sm:text-lg font-bold tracking-tight text-text">
                   AI Search & Engine Visibility (Provider Observations)
                 </h2>
               </div>
@@ -270,75 +300,95 @@ export function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="p-4 bg-surface border-border hover:border-secondary/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Queries Observed
                   </span>
-                  <span className="p-1.5 rounded-lg bg-secondary/10 text-secondary">
-                    <Eye className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-secondary/10 text-secondary">
+                    <Eye className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">{totalObservations}</div>
-                <p className="text-xs text-muted mt-1">Recorded via search/AI engines</p>
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
+                  {totalObservations}
+                </div>
+                <p className="text-xs text-muted mt-1 font-medium">Recorded via search/AI engines</p>
               </Card>
 
-              <Card className="p-4 bg-surface border-border hover:border-primary/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Brand Mentions
                   </span>
-                  <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                    <Building2 className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                    <Building2 className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">{totalBrandMentions}</div>
-                <p className="text-xs text-muted mt-1">Extracted from answer texts</p>
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
+                  {totalBrandMentions}
+                </div>
+                <p className="text-xs text-muted mt-1 font-medium">Documented in answer texts</p>
               </Card>
 
-              <Card className="p-4 bg-surface border-border hover:border-accent/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Citations Extracted
                   </span>
-                  <span className="p-1.5 rounded-lg bg-accent/10 text-accent">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-accent/10 text-accent">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">{totalCitations}</div>
-                <p className="text-xs text-muted mt-1">Direct source references logged</p>
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
+                  {totalCitations}
+                </div>
+                <p className="text-xs text-muted mt-1 font-medium">Direct source references logged</p>
               </Card>
 
-              <Card className="p-4 bg-surface border-border hover:border-warning/30 transition-all shadow-sm">
+              <Card hoverable className="p-5 bg-surface border-border">
                 <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold text-muted uppercase tracking-wider">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted">
                     Competitor References
                   </span>
-                  <span className="p-1.5 rounded-lg bg-warning/10 text-warning">
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                  </span>
+                  <div className="p-2 rounded-xl bg-warning/10 text-warning">
+                    <AlertTriangle className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="mt-2 text-2xl font-bold text-text tracking-tight">
+                <div className="mt-3 text-3xl font-extrabold text-text tracking-tight">
                   {totalCompetitorMentions}
                 </div>
-                <p className="text-xs text-muted mt-1">Observed in rival query responses</p>
+                <p className="text-xs text-muted mt-1 font-medium">Observed in rival query responses</p>
               </Card>
             </div>
           </div>
 
           {/* Activity Chart & Deep Dive Links */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
-            <Card className="lg:col-span-2 p-5 bg-surface border-border">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-text">Recent Audit Readiness Scores</h3>
-                <span className="text-xs text-muted">0-100 Content Completeness</span>
+            <Card className="lg:col-span-2 p-6 bg-surface border-border shadow-card">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-base font-bold text-text">Recent Audit Readiness Scores</h3>
+                  <p className="text-xs text-muted mt-0.5">Content completeness score breakdown (0-100)</p>
+                </div>
+                <Badge variant="primary">Latest Audits</Badge>
               </div>
+
               {readinessData.length > 0 ? (
                 <div className="h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={readinessData}>
-                      <XAxis dataKey="name" stroke="currentColor" className="text-muted text-xs" />
-                      <YAxis domain={[0, 100]} stroke="currentColor" className="text-muted text-xs" />
+                      <XAxis
+                        dataKey="name"
+                        stroke="currentColor"
+                        className="text-muted text-xs font-medium"
+                        tickLine={false}
+                      />
+                      <YAxis
+                        domain={[0, 100]}
+                        stroke="currentColor"
+                        className="text-muted text-xs font-medium"
+                        tickLine={false}
+                      />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "var(--color-surface)",
@@ -365,43 +415,59 @@ export function Dashboard() {
               )}
             </Card>
 
-            <Card className="p-5 bg-surface border-border flex flex-col justify-between">
+            <Card className="p-6 bg-surface border-border flex flex-col justify-between shadow-card">
               <div>
-                <h3 className="text-sm font-bold text-text mb-1">Quick Action Navigation</h3>
-                <p className="text-xs text-muted mb-4">
-                  Compare content readiness against competitor coverage and external visibility.
+                <h3 className="text-base font-bold text-text mb-1">Quick Action Hub</h3>
+                <p className="text-xs text-muted mb-5 leading-relaxed">
+                  Navigate directly to specific audit capabilities, competitor benchmarks, and reports.
                 </p>
-                <div className="space-y-2">
-                  <Link to="/audits" className="block">
-                    <div className="p-3 rounded-lg border border-border hover:bg-background hover:border-primary/30 transition flex items-center justify-between text-xs font-semibold text-text">
-                      <span className="flex items-center gap-2">
-                        <FileCheck2 className="w-3.5 h-3.5 text-primary" /> Run Answer-Readiness Audit
+
+                <div className="space-y-2.5">
+                  <Link to="/audits" className="block group">
+                    <div className="p-3 rounded-xl border border-border bg-surface hover:bg-surface-hover hover:border-primary/40 transition-all flex items-center justify-between text-xs font-semibold text-text shadow-sm">
+                      <span className="flex items-center gap-2.5">
+                        <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                          <FileCheck2 className="w-4 h-4" />
+                        </span>
+                        <span>Answer-Readiness Audit</span>
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-muted" />
+                      <ArrowRight className="w-3.5 h-3.5 text-muted group-hover:text-primary group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </Link>
-                  <Link to="/visibility" className="block">
-                    <div className="p-3 rounded-lg border border-border hover:bg-background hover:border-secondary/30 transition flex items-center justify-between text-xs font-semibold text-text">
-                      <span className="flex items-center gap-2">
-                        <Eye className="w-3.5 h-3.5 text-secondary" /> Inspect AI Search Visibility
+
+                  <Link to="/visibility" className="block group">
+                    <div className="p-3 rounded-xl border border-border bg-surface hover:bg-surface-hover hover:border-secondary/40 transition-all flex items-center justify-between text-xs font-semibold text-text shadow-sm">
+                      <span className="flex items-center gap-2.5">
+                        <span className="p-1.5 rounded-lg bg-secondary/10 text-secondary">
+                          <Eye className="w-4 h-4" />
+                        </span>
+                        <span>AI Search Visibility</span>
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-muted" />
+                      <ArrowRight className="w-3.5 h-3.5 text-muted group-hover:text-secondary group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </Link>
-                  <Link to="/competitors" className="block">
-                    <div className="p-3 rounded-lg border border-border hover:bg-background hover:border-warning/30 transition flex items-center justify-between text-xs font-semibold text-text">
-                      <span className="flex items-center gap-2">
-                        <Building2 className="w-3.5 h-3.5 text-warning" /> Content Gap Analyzer
+
+                  <Link to="/competitors" className="block group">
+                    <div className="p-3 rounded-xl border border-border bg-surface hover:bg-surface-hover hover:border-warning/40 transition-all flex items-center justify-between text-xs font-semibold text-text shadow-sm">
+                      <span className="flex items-center gap-2.5">
+                        <span className="p-1.5 rounded-lg bg-warning/10 text-warning">
+                          <Building2 className="w-4 h-4" />
+                        </span>
+                        <span>Competitor Content Gaps</span>
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-muted" />
+                      <ArrowRight className="w-3.5 h-3.5 text-muted group-hover:text-warning group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </Link>
-                  <Link to="/reports" className="block">
-                    <div className="p-3 rounded-lg border border-border hover:bg-background hover:border-info/30 transition flex items-center justify-between text-xs font-semibold text-text">
-                      <span className="flex items-center gap-2">
-                        <TrendingUp className="w-3.5 h-3.5 text-info" /> Export CSV & PDF Reports
+
+                  <Link to="/reports" className="block group">
+                    <div className="p-3 rounded-xl border border-border bg-surface hover:bg-surface-hover hover:border-info/40 transition-all flex items-center justify-between text-xs font-semibold text-text shadow-sm">
+                      <span className="flex items-center gap-2.5">
+                        <span className="p-1.5 rounded-lg bg-info/10 text-info">
+                          <TrendingUp className="w-4 h-4" />
+                        </span>
+                        <span>Export CSV &amp; PDF Reports</span>
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-muted" />
+                      <ArrowRight className="w-3.5 h-3.5 text-muted group-hover:text-info group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </Link>
                 </div>
@@ -409,7 +475,7 @@ export function Dashboard() {
             </Card>
           </div>
 
-          {/* AI Engine Matrix Component */}
+          {/* AI Engine Matrix & Comparison Component */}
           <AiEngineSimulator />
         </>
       )}
